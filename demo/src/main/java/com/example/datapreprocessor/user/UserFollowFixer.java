@@ -15,28 +15,48 @@ public final class UserFollowFixer {
     public static Path fix(Path in) throws IOException {
         Path out = in.getParent().resolve("user_fixed.csv");
 
-        // 建立反向索引
+        // 建立索引
         Map<String, Set<String>> followersOf = new HashMap<>();
         Map<String, Set<String>> followingOf = new HashMap<>();
         List<User> users = loadUsers(in);
 
         for (User u : users) {
-            for (String fid : splitIds(u.followingUsers)) {
-                followingOf.computeIfAbsent(u.authorId, k -> new HashSet<>()).add(fid);
-                followersOf.computeIfAbsent(fid, k -> new HashSet<>()).add(u.authorId);
+            for (String id : splitIds(u.followerUsers)) {
+                followersOf.computeIfAbsent(u.authorId, k -> new HashSet<>()).add(id);
+                followingOf.computeIfAbsent(id, k -> new HashSet<>()).add(u.authorId);
             }
         }
 
-        // 修正本行
         for (User u : users) {
-            Set<String> realFollowers = followersOf.getOrDefault(u.authorId, Set.of());
-            Set<String> realFollowing = followingOf.getOrDefault(u.authorId, Set.of());
+            for (String id : splitIds(u.followingUsers)) {
+                followingOf.computeIfAbsent(u.authorId, k -> new HashSet<>()).add(id);
+                followersOf.computeIfAbsent(id, k -> new HashSet<>()).add(u.authorId);
+            }
+        }
 
-            u.followers      = realFollowers.size();
-            u.following      = realFollowing.size();
-            // 列表格式保持原样：c("id1,id2") 或空串
-            u.followerUsers  = realFollowers.isEmpty() ? "" : "c(\"" + String.join(",", realFollowers) + "\")";
-            u.followingUsers = realFollowing.isEmpty() ? "" : "c(\"" + String.join(",", realFollowing) + "\")";
+        // 修正补全
+        for (User u : users) {
+            // 原始列表
+            List<String> origFollowers = new ArrayList<>(splitIds(u.followerUsers));
+            List<String> origFollowing = new ArrayList<>(splitIds(u.followingUsers));
+
+            // 拿到followersOf和followingOf表里的集合
+            Set<String> realFollowerSet = followersOf.getOrDefault(u.authorId, Set.of());
+            Set<String> realFollowingSet = followingOf.getOrDefault(u.authorId, Set.of());
+
+            // 把缺失的ID加到尾部
+            for (String id : realFollowerSet) {
+                if (!origFollowers.contains(id)) origFollowers.add(id);
+            }
+            for (String id : realFollowingSet) {
+                if (!origFollowing.contains(id)) origFollowing.add(id);
+            }
+
+            // 写回字符串 & 计数
+            u.followers      = origFollowers.size();
+            u.following      = origFollowing.size();
+            u.followerUsers  = origFollowers.isEmpty() ? "" : "c(\"" + String.join(",", origFollowers) + "\")";
+            u.followingUsers = origFollowing.isEmpty() ? "" : "c(\"" + String.join(",", origFollowing) + "\")";
         }
 
         // 写回 CSV
@@ -65,8 +85,6 @@ public final class UserFollowFixer {
         System.out.println("修复完成 → " + out.toAbsolutePath());
         return out;
     }
-
-    
 
     private static List<User> loadUsers(Path in) throws IOException {
         List<User> list = new ArrayList<>();
@@ -116,9 +134,9 @@ public final class UserFollowFixer {
             cell = cell.substring(3, cell.length() - 2);
         }
         cell = cell.replace("\"", "");
-        return Arrays.stream(SPLIT.split(cell))
-                     .filter(s -> !s.trim().isEmpty())
-                     .toList();
+        return new ArrayList<>(Arrays.asList(SPLIT.split(cell)))
+                   .stream().filter(s -> !s.trim().isEmpty())
+                   .toList();
     }
 
     private static final class User {
