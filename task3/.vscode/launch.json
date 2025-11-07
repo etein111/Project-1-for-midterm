@@ -1,0 +1,33 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Import",
+            "request": "launch",
+            "mainClass": "main.java.com.Import",
+            "projectName": "task3_5a8d6090",
+            "args": [
+                "./csv",
+                "database"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "Import",
+            "request": "launch",
+            "mainClass": "Import",
+            "projectName": "task3_5a8d6090",
+            "args": [
+                "./csv",
+                "database"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        }
+    ]
+}
