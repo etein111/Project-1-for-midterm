@@ -10,9 +10,9 @@ import com.opencsv.CSVReaderBuilder;
 import com.opencsv.RFC4180ParserBuilder;
 import com.opencsv.exceptions.CsvValidationException;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
+// import org.apache.commons.csv.CSVFormat;
+// import org.apache.commons.csv.CSVParser;
+// import org.apache.commons.csv.CSVRecord;
 
 public class Import {
 
@@ -33,8 +33,8 @@ public class Import {
             // loadUser        (con, dir.resolve("user.csv"));
             // loadFollows     (con, dir.resolve("user.csv"));
 
-            // loadUser        (con, dir.resolve("user_fixed.csv"));
-            // loadFollows     (con, dir.resolve("user_fixed.csv"));
+            loadUser        (con, dir.resolve("user_fixed.csv"));
+            loadFollows     (con, dir.resolve("user_fixed.csv"));
 
             // loadRecipe                      (con, dir.resolve("recipes.csv"));
             // loadIngredient                  (con, dir.resolve("recipes.csv"));
@@ -46,18 +46,18 @@ public class Import {
             // loadFavorite                    (con, dir.resolve("recipes.csv"));
             // loadTimeInformation             (con, dir.resolve("recipes.csv"));
 
-            // loadRecipe                      (con, dir.resolve("recipes_checktime.csv"));
-            // loadIngredient                  (con, dir.resolve("recipes_checktime.csv"));
-            // loadNutritionalInformation      (con, dir.resolve("recipes_checktime.csv"));
-            // loadServingInformation          (con, dir.resolve("recipes_checktime.csv"));
-            // loadKeyword                     (con, dir.resolve("recipes_checktime.csv"));
-            // loadFavorite                    (con, dir.resolve("recipes_checktime.csv"));
-            // loadTimeInformation             (con, dir.resolve("recipes_checktime.csv"));
+            loadRecipe                      (con, dir.resolve("recipes_checktime.csv"));
+            loadIngredient                  (con, dir.resolve("recipes_checktime.csv"));
+            loadNutritionalInformation      (con, dir.resolve("recipes_checktime.csv"));
+            loadServingInformation          (con, dir.resolve("recipes_checktime.csv"));
+            loadKeyword                     (con, dir.resolve("recipes_checktime.csv"));
+            loadFavorite                    (con, dir.resolve("recipes_checktime.csv"));
+            loadTimeInformation             (con, dir.resolve("recipes_checktime.csv"));
 
             // loadReview      (con, dir.resolve("reviews.csv"));
             // loadLike        (con, dir.resolve("reviews.csv"));
 
-            // loadReview    (con, dir.resolve("reviews_recipeid2int.csv"));
+            loadReview    (con, dir.resolve("reviews_recipeid2int.csv"));
             loadLike      (con, dir.resolve("reviews_recipeid2int.csv"));
 
             con.commit();
@@ -126,6 +126,7 @@ public class Import {
             int LineCnt = 0;
             int FollowerBatchCnt = 0;
             int FollowingBatchCnt = 0;
+            int TotalBatchCnt = 0;
             String[] header = reader.readNext();
             String[] r;
             while ((r = reader.readNext()) != null) {
@@ -141,7 +142,8 @@ public class Import {
                         FollowingBatchCnt++;
                         if ( (FollowerBatchCnt + FollowingBatchCnt) % BATCH == 0) {
                             psFollow.executeBatch();
-                            System.out.println("Follower 表已缓存 " + FollowerBatchCnt + FollowingBatchCnt + " 行数据...");
+                            TotalBatchCnt = FollowerBatchCnt + FollowingBatchCnt;
+                            System.out.println("Follower 表已缓存 " + TotalBatchCnt + " 行数据...");
                         }
                     }
 
@@ -154,7 +156,8 @@ public class Import {
                         FollowerBatchCnt++;
                         if ( (FollowerBatchCnt + FollowingBatchCnt) % BATCH == 0) {
                             psFollow.executeBatch();
-                            System.out.println("Follower 表已缓存 " + FollowerBatchCnt + FollowingBatchCnt + " 行数据...");
+                            TotalBatchCnt = FollowerBatchCnt + FollowingBatchCnt;
+                            System.out.println("Follower 表已缓存 " + TotalBatchCnt + " 行数据...");
                         }
                     }
 
@@ -919,20 +922,20 @@ public class Import {
     // private static String[] splitCsvLine(String line) {
     //     return line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
     // }
-    private static String[] splitCsvLine(String line) throws IOException {
-    CSVFormat format = CSVFormat.DEFAULT
-            .builder()
-            .setEscape('\\')
-            .setIgnoreSurroundingSpaces(true)
-            .build();
+    // private static String[] splitCsvLine(String line) throws IOException {
+    // CSVFormat format = CSVFormat.DEFAULT
+    //         .builder()
+    //         .setEscape('\\')
+    //         .setIgnoreSurroundingSpaces(true)
+    //         .build();
 
-        try (CSVParser parser = CSVParser.parse(line, format)) {
-            CSVRecord record = parser.getRecords().get(0);
-            String[] arr = new String[record.size()];
-            for (int i = 0; i < record.size(); i++) arr[i] = record.get(i);
-            return arr;
-        }
-    }
+    //     try (CSVParser parser = CSVParser.parse(line, format)) {
+    //         CSVRecord record = parser.getRecords().get(0);
+    //         String[] arr = new String[record.size()];
+    //         for (int i = 0; i < record.size(); i++) arr[i] = record.get(i);
+    //         return arr;
+    //     }
+    // }
 
     /* 拆多值字段 */
     // private static Set<String> splitParts(String src) {
