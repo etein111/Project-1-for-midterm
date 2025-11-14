@@ -3,31 +3,48 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Import",
+            "name": "OptimizedImport",
             "request": "launch",
-            "mainClass": "main.java.com.Import",
-            "projectName": "task3_5a8d6090",
+            "mainClass": "com.OptimizedImport",
+            "projectName": "task3",
+            "args": "./csv"
+        },
+        {
+            "type": "java",
+            "name": "MultiThreadCopyImport",
+            "request": "launch",
+            "mainClass": "com.MultiThreadCopyImport",
+            "projectName": "task3",
+            "args": "./csv"
+        },
+        {
+            "type": "java",
+            "name": "BaselineMultiThread",
+            "request": "launch",
+            "mainClass": "com.BaselineMultiThread",
+            "projectName": "task3",
+            "args": "./csv"
+        },
+        {
+            "type": "java",
+            "name": "baseline_eff",
+            "request": "launch",
+            "mainClass": "com.baseline_eff",
+            "projectName": "task3",
             "args": [
                 "./csv",
-                "database"
+                "project_midterm"
             ]
         },
         {
             "type": "java",
-            "name": "Import",
+            "name": "Import with CSV",
             "request": "launch",
-            "mainClass": "Import",
-            "projectName": "task3_5a8d6090",
+            "mainClass": "com.Import",
+            "projectName": "task3",
             "args": [
-                "./csv",
-                "database"
+                "./csv"
             ]
-        },
-        {
-            "type": "java",
-            "name": "Current File",
-            "request": "launch",
-            "mainClass": "${file}"
         }
     ]
 }

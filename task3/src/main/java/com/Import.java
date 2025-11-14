@@ -1,4 +1,4 @@
-package main.java.com;
+package com;
 import java.sql.*;
 import java.nio.file.*;
 import java.io.*;
@@ -17,14 +17,14 @@ import com.opencsv.exceptions.CsvValidationException;
 public class Import {
 
     /* ===================== 连接常量 ===================== */
-    private static final String URL   = "jdbc:postgresql://localhost:5432/project1";
+    private static final String URL   = "jdbc:postgresql://localhost:5432/project1_copy";
     private static final String USER  = "postgres";
     private static final String PWD   = "123456";
     private static final int    BATCH = 2_000;
 
     /* ===================== 主入口 ===================== */
     public static void main(String[] args) throws Exception {
-        if (args.length != 2) throw new IllegalArgumentException("需要提供 CSV 文件目录和数据库名称两个参数！");
+        if (args.length != 1) throw new IllegalArgumentException("需要提供 CSV 文件目录");
         Path dir = Paths.get(args[0]);
 
         try (Connection con = DriverManager.getConnection(URL, USER, PWD)) {
@@ -33,6 +33,7 @@ public class Import {
             // loadUser        (con, dir.resolve("user.csv"));
             // loadFollows     (con, dir.resolve("user.csv"));
 
+            long StartTime = System.currentTimeMillis();
             loadUser        (con, dir.resolve("user_fixed.csv"));
             loadFollows     (con, dir.resolve("user_fixed.csv"));
 
@@ -61,7 +62,10 @@ public class Import {
             loadLike      (con, dir.resolve("reviews_recipeid2int.csv"));
 
             con.commit();
+            long EndTime = System.currentTimeMillis();
             System.out.println("===== 全部表导入完成 =====");
+            double TotalTime = (EndTime - StartTime) / 1000.0;
+            System.out.printf("TotalTime:%.2f", TotalTime);
         }
     }
 
