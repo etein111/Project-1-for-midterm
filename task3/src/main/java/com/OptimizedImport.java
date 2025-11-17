@@ -16,7 +16,7 @@ import com.opencsv.exceptions.CsvValidationException;
 public class OptimizedImport {
 
     /* ===================== 连接常量 ===================== */
-    private static final String URL = "jdbc:postgresql://localhost:5432/project1_copy";
+    private static final String URL = "jdbc:postgresql://localhost:5432/project_midterm";
     private static final String USER = "postgres";
     private static final String PWD = "123456";
 
@@ -28,6 +28,7 @@ public class OptimizedImport {
         try (Connection con = DriverManager.getConnection(URL, USER, PWD)) {
             CopyManager copyManager = new CopyManager(con.unwrap(BaseConnection.class));
             con.setAutoCommit(false);
+            clearDatabase(con);
             
             long StartTime = System.currentTimeMillis();
             loadUser(copyManager, dir.resolve("user_fixed.csv"));
@@ -57,6 +58,30 @@ public class OptimizedImport {
             double TotalTime = (EndTime - StartTime) / 1000.0;
             System.out.printf("TotalTime:%.2f", TotalTime);
         }
+    }
+
+        private static void clearDatabase(Connection con) throws SQLException {
+        System.out.println("===== 准备清空所有相关的表... =====");
+        
+        // 将您所有需要清空的表名放在这个列表里
+        // 注意：顺序很重要！先清空依赖别人的表，再清空被依赖的表。
+        List<String> tableNames = Arrays.asList(
+            "\"Like\"", "Favorite", "Recipe_Keyword", "Recipe_Ingredient",
+            "Serving_Information", "Nutritional_Information", "Time_Information",
+            "Review", "Follows", "Recipe", "Keyword", "Ingredient", "\"User\""
+        );
+
+        try (Statement stmt = con.createStatement()) {
+            for (String tableName : tableNames) {
+                // TRUNCATE ... RESTART IDENTITY CASCADE;
+                // TRUNCATE: 快速删除所有行
+                // RESTART IDENTITY: 重置自增 ID (如 SERIAL) 的计数器
+                // CASCADE: 级联清空依赖此表的其他表
+                stmt.execute("TRUNCATE TABLE " + tableName + " RESTART IDENTITY CASCADE;");
+            }
+        }
+        con.commit(); // 立即提交清空操作
+        System.out.println("===== 所有相关的表已清空 =====");
     }
 
     /* =================================================================

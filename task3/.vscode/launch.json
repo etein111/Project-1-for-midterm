@@ -3,7 +3,31 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ImportMySQL",
+            "request": "launch",
+            "mainClass": "com.ImportMySQL",
+            "projectName": "task3",
+            "args": "./csv"
+        },
+        {
+            "type": "java",
+            "name": "MySQLImport",
+            "request": "launch",
+            "mainClass": "com.MySQLImport",
+            "projectName": "task3",
+            "args": "./csv"
+        },
+        {
+            "type": "java",
             "name": "OptimizedImport",
+            "request": "launch",
+            "mainClass": "com.OptimizedImport",
+            "projectName": "task3",
+            "args": "./csv"
+        },
+        {
+            "type": "java",
+            "name": "MySQLOptimizedImport",
             "request": "launch",
             "mainClass": "com.OptimizedImport",
             "projectName": "task3",
