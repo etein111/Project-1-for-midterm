@@ -10,7 +10,7 @@
             "request": "launch",
             "mainClass": "com.Client",
             "projectName": "task4",
-            "args": "database"
+            "args": "mysql"
         },
         {
             "type": "java",

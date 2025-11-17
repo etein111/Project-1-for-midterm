@@ -168,9 +168,9 @@ public class FileManipulation implements DataManipulation {
                     System.err.println("跳过行: " + Arrays.toString(fields) + " - " + e.getMessage());
                 }
                 
-                if (processedCount % 10000 == 0) {
-                    System.out.println("已处理 " + processedCount + " 行，匹配 " + matchedCount + " 行...");
-                }
+                // if (processedCount % 10000 == 0) {
+                //     System.out.println("已处理 " + processedCount + " 行，匹配 " + matchedCount + " 行...");
+                // }
             }
             
             long fileReadEndTime = System.currentTimeMillis();
@@ -765,9 +765,9 @@ public class FileManipulation implements DataManipulation {
                     writeCsvRow(writer, fields);
                 }
                 
-                if (deletedReviews > 0) {
-                    System.out.println("Deleted " + deletedReviews + " related reviews");
-                }
+                // if (deletedReviews > 0) {
+                //     System.out.println("Deleted " + deletedReviews + " related reviews");
+                // }
             }
             
             // Replace original file
